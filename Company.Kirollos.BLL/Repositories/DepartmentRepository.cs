@@ -12,9 +12,9 @@ namespace Company.Kirollos.BLL.Repositories
     public class DepartmentRepository : IDepartmentRepository
     {
         private readonly CompanyDbContext _context; // Null
-        public DepartmentRepository()
+        public DepartmentRepository(CompanyDbContext Context)
         {
-            _context = new CompanyDbContext();
+            _context = Context;
         }
 
         public IEnumerable<Department> GetAll()
