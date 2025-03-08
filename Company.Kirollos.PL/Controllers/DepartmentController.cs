@@ -2,6 +2,7 @@
 using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Kirollos.PL.Controllers
@@ -50,8 +51,62 @@ namespace Company.Kirollos.PL.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var result = _departmentRepository.Get(id);
+
+            var department = new Department()
+            {
+                Id = id,
+                Code = result.Code,
+                Name = result.Name,
+                CreateAt = result.CreateAt
+            };
+            return View(department);
+        }
+
+
+        [HttpGet]
+        public IActionResult Update(int id)
+        {
+            var result = _departmentRepository.Get(id);
+            return View(result);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var result = _departmentRepository.Get(id);
+
+            var department = new Department()
+            {
+                Id = id,
+                Code = result.Code,
+                Name = result.Name,
+                CreateAt = result.CreateAt
+            };
+            return View(department);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Department model)
+        {
+            if (model is not null)
+            {
+                var count = _departmentRepository.Delete(model);
+                if (count > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(model);
+        }
+
     }
 }
