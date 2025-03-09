@@ -59,14 +59,7 @@ namespace Company.Kirollos.PL.Controllers
         {
             var result = _departmentRepository.Get(id);
 
-            var department = new Department()
-            {
-                Id = id,
-                Code = result.Code,
-                Name = result.Name,
-                CreateAt = result.CreateAt
-            };
-            return View(department);
+            return View(result);
         }
 
 
@@ -77,7 +70,19 @@ namespace Company.Kirollos.PL.Controllers
             return View(result);
         }
 
-
+        [HttpPost]
+        public IActionResult Update(Department model)
+        {
+            if (model is not null)
+            {
+                var count = _departmentRepository.Update(model);
+                if (count > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(model);
+        }
 
         [HttpGet]
         public IActionResult Delete(int id)
