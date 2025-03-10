@@ -36,6 +36,7 @@ namespace Company.Kirollos.DAL.Data.Contexts
         //    optionsBuilder.UseSqlServer("Server = DESKTOP-PEC2QL2\\SQLEXPRESS; Database = MVCProject; Trusted_Connection = True; TrustServerCertificate = True");
         //}
 
-        public DbSet<Department> Departments { get; set; } 
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
     }
 }

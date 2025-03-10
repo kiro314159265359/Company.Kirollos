@@ -1,0 +1,68 @@
+﻿@model Employee
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details Page</h1>
+
+<br />
+<br />
+
+<form asp-action="Create">
+    <div class="my-3">
+        <label asp-for="Name" class="col-form-label"></label>
+        <input asp-for="Name" class="form-control" readonly/>
+    </div>
+
+    <div class="my-3">
+        <label asp-for="Age" class="col-form-label"></label>
+        <input asp-for="Age" class="form-control" readonly />
+    </div>
+
+    <div class="my-3">
+        <label asp-for="Email" class="col-form-label"></label>
+        <input asp-for="Email" class="form-control" readonly />
+    </div>
+
+    <div class="my-3">
+        <label asp-for="Adress" class="col-form-label"></label>
+        <input asp-for="Adress" class="form-control" readonly />
+    </div>
+
+    <div class="my-3">
+        <label asp-for="Phone" class="col-form-label"></label>
+        <input asp-for="Phone" class="form-control" readonly />
+    </div>
+
+    <div class="my-3">
+        <label asp-for="Salary" class="col-form-label"></label>
+        <input asp-for="Salary" class="form-control" readonly />
+    </div>
+
+    <div class="my-3 form-check">
+        <input asp-for="IsActive" type="checkbox" class="form-check-input" disabled />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+
+    <div class="my-3 form-check">
+        <input asp-for="IsDeleted" type="checkbox" class="form-check-input" disabled />
+        <label asp-for="IsDeleted" class="form-check-label"></label>
+    </div>
+
+    <div class="my-3">
+        <label asp-for="HiringDate" class="col-form-label"></label>
+        <input asp-for="HiringDate" class="form-control" readonly />
+    </div>
+
+    <div class="my-3">
+        <label asp-for="CreateAt" class="col-form-label"></label>
+        <input asp-for="CreateAt" class="form-control" readonly />
+    </div>
+
+    <div class="my-3">
+        <a asp-action="Update" asp-route-id="@Model.Id" asp-controller="Employee" class="btn btn-warning">Edit</a>
+
+        <a asp-action="Index" asp-controller="Employee" class="btn btn-light">Back To List</a>
+    </div>
+</form>

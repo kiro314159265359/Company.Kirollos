@@ -9,16 +9,16 @@ using Microsoft.Identity.Client;
 
 namespace Company.Kirollos.BLL.Interfaces
 {
-    public interface IDepartmentRepository
+    public interface IDepartmentRepository : IGenericRepository<Department>
     {
-        public IEnumerable<Department> GetAll(); // In DAL 
+        //public IEnumerable<Department> GetAll(); // In DAL 
 
-        public Department? Get(int id); // may not return a department
+        //public Department? Get(int id); // may not return a department
 
-        public int Add(Department model);
+        //public int Add(Department model);
 
-        public int Update(Department model);
+        //public int Update(Department model);
 
-        public int Delete(Department model);
+        //public int Delete(Department model);
     }
 }
