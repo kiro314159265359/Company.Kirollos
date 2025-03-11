@@ -16,7 +16,7 @@ namespace Company.Kirollos.PL
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>(); // Allow Dependency injection for department
-            builder.Services.AddScoped<IEmployeeRepository,EmployeeRepository>(); // Allow Dependency injection for Employee
+            builder.Services.AddScoped<IEmployeeRepository,EmployeeRepository>();     // Allow Dependency injection for Employee
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

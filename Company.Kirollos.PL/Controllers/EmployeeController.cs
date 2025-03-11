@@ -69,25 +69,56 @@ namespace Company.Kirollos.PL.Controllers
 
         public IActionResult Update(int? id)
         {
-            return Details(id, "Update");
+            if (id is null) return BadRequest("Invalid Id");
+
+            var Employee = _employeeRepository.Get(id.Value);
+            if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
+
+            var employee = new CreateEmployeeDto()
+            {
+                Name = Employee.Name,
+                Age = Employee.Age,
+                Email = Employee.Email,
+                Adress = Employee.Adress,
+                Phone = Employee.Phone,
+                Salary = Employee.Salary,
+                IsActive = Employee.IsActive,
+                IsDeleted = Employee.IsDeleted,
+                HiringDate = Employee.HiringDate,
+                CreateAt = Employee.CreateAt
+            };
+
+            return View(employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update([FromRoute] int id, Employee employee)
+        public IActionResult Update([FromRoute] int id, CreateEmployeeDto model)
         {
             if (ModelState.IsValid)
             {
-                if (id == employee.Id)
+                var employee = new Employee()
                 {
-                    var count = _employeeRepository.Update(employee);
-                    if (count > 0)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
+                    Id = id,
+                    Name = model.Name,
+                    Age = model.Age,
+                    Email = model.Email,
+                    Adress = model.Adress,
+                    Phone = model.Phone,
+                    Salary = model.Salary,
+                    IsActive = model.IsActive,
+                    IsDeleted = model.IsDeleted,
+                    HiringDate = model.HiringDate,
+                    CreateAt = model.CreateAt
+                };
+                var count = _employeeRepository.Update(employee);
+                if (count > 0)
+                {
+                    return RedirectToAction(nameof(Index));
                 }
+
             }
-            return View(employee);
+            return View(model);
         }
 
         [HttpGet]

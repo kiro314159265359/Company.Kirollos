@@ -9,22 +9,9 @@
 <br />
 <br />
 
-<form asp-action="Update" method="get">
-    <div class="my-3">
-        <label asp-for="Code" class="col-form-label"></label>
-        <input asp-for="Code" class="form-control" value="@Model.Code" readonly />
-    </div>
+<form asp-action="Details">
 
-    <div class="my-3">
-        <label asp-for="Name" class="col-form-label"></label>
-        <input asp-for="Name" class="form-control" value="@Model.Name" readonly />
-    </div>
-
-    <div class="my-3">
-        <label asp-for="CreateAt" class="col-form-label"></label>
-        <input asp-for="CreateAt" class="form-control" readonly value="@Model.CreateAt.ToString("yyyy-MM-dd HH:mm")" />
-    </div>
-
+    <partial name="DepartmentPartialView/_DeleteDetailsDepartmentPartialView" />
     <div class="my-3">
         <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
         <a asp-action="Index" class="btn btn-light">Back To List</a>
