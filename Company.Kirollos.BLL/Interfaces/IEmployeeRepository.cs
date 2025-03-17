@@ -18,5 +18,7 @@ namespace Company.Kirollos.BLL.Interfaces
         //public int Update(Employee model);
 
         //public int Delete(Employee model);
+
+        public List<Employee>? GetByName(string name); 
     }
 }

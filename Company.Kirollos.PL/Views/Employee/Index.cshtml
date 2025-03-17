@@ -7,9 +7,24 @@
 <h1>All Employees</h1>
 
 <br />
+
+
+<form>
+    <div class="container m-2">
+        <div class="row">
+            <div class="col-6">
+                <input id="SearchInput" placeholder="Search By Name" name="SearchInput" class="form-control" />
+            </div>
+            <div class="col-6">
+                <input type="submit" class="btn btn-success" value="Search" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
 <br />
 <a asp-action="Create" asp-controller="Employee" class="btn btn-primary">Create Employee</a>
-<br />
 <br />
 
 @* <div class="alert alert-danger"> *@
@@ -34,7 +49,7 @@
     </div>
 }
 
-<br />
+
 <br />
 @if (Model.Count() > 0)
 {
@@ -75,7 +90,11 @@
                     @if (item.Department is null)
                     {
                         <td>No Department</td>
-                    }else {<td>@item.Department.Name</td>}
+                    }
+                    else
+                    {
+                        <td>@item.Department.Name</td>
+                    }
                     <partial name="_ButtonPartialView" model="@item.Id" />
                 </tr>
             }

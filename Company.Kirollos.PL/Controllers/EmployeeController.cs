@@ -17,14 +17,24 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string? SearchInput)
         {
-            var result = _employeeRepository.GetAll().ToList();
+            IEnumerable<Employee> employees;
+
+            if (!string.IsNullOrEmpty(SearchInput))
+            {
+                employees = _employeeRepository.GetByName(SearchInput);
+            }
+            else
+            {
+                employees = _employeeRepository.GetAll();
+            }
+            #region Viewbag
 
             //ViewData["Message"] = "Hello from ViewData";
-            //ViewBag.Message = "Hello from ViewBag";
-
-            return View(result);
+            //ViewBag.Message = "Hello from ViewBag"; 
+            #endregion
+            return View(employees);
         }
 
         [HttpGet]
