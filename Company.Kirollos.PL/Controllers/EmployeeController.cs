@@ -10,15 +10,15 @@ namespace Company.Kirollos.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
 
         public EmployeeController(IEmployeeRepository employeeRepository
-            , IDepartmentRepository departmentRepository
+            //, IDepartmentRepository departmentRepository
             , IMapper mapper)
         {
             _employeeRepository = employeeRepository;
-            _departmentRepository = departmentRepository;
+            //_departmentRepository = departmentRepository;
             _mapper = mapper;
         }
 
@@ -46,8 +46,8 @@ namespace Company.Kirollos.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var departments = _departmentRepository.GetAll();
-            ViewData["departments"] = departments;
+            //var departments = _departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
 
             return View();
         }
@@ -96,9 +96,6 @@ namespace Company.Kirollos.PL.Controllers
             var Employee = _employeeRepository.Get(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
 
-            var departments = _departmentRepository.Get(id.Value);
-            ViewData["departments"] = departments;
-
             return View(viewName, Employee);
         }
 
@@ -106,8 +103,8 @@ namespace Company.Kirollos.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var departments = _departmentRepository.GetAll();
-            ViewData["departments"] = departments;
+            //var departments = _departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
 
             var Employee = _employeeRepository.Get(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });

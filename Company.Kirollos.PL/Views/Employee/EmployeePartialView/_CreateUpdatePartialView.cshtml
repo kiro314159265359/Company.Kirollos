@@ -1,7 +1,10 @@
-﻿@model CreateEmployeeDto
+﻿
+@model CreateEmployeeDto
+@inject IDepartmentRepository _departmentRepo
 
 @{
-    var departments = new SelectList(ViewData["departments"] as IEnumerable<Department> ,"Id" , "Name");
+    // var departments = new SelectList(ViewData["departments"] as IEnumerable<Department> ,"Id" , "Name");
+    var departments = new SelectList(_departmentRepo.GetAll() , "Id", "Name");
 }
 
 
