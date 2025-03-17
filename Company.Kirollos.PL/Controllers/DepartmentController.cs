@@ -117,12 +117,12 @@ namespace Company.Kirollos.PL.Controllers
         //    return View(model);
         //} 
         #endregion
-        public IActionResult Update([FromRoute] int id, CreateDepartmentDto model)
+        public IActionResult Update([FromRoute] int id, Department model)
         {
             if (ModelState.IsValid)
             {
                 var departmentDto = _mapper.Map<Department>(model);
-                departmentDto.Id = id;
+
                 var count = _departmentRepository.Update(departmentDto);
                 if (count > 0)
                 {
@@ -145,12 +145,12 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int id, CreateDepartmentDto model)
+        public IActionResult Delete([FromRoute] int id, Department model)
         {
             if (ModelState.IsValid)
             {
                 var department = _mapper.Map<Department>(model);
-                department.Id = id;
+
                 if (id != department.Id) return BadRequest();
                 var count = _departmentRepository.Delete(department);
                 if (count > 0)
