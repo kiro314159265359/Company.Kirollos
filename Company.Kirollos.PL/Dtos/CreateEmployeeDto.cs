@@ -22,5 +22,7 @@ namespace Company.Kirollos.PL.Dtos
         [DisplayName("Hire Date")]
         public DateTime HiringDate { get; set; }
         public DateTime CreateAt { get; set; }
+        [DisplayName("Department")]
+        public int? DepartmentId { get; set; }
     }
 }

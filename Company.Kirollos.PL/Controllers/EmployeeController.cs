@@ -9,22 +9,30 @@ namespace Company.Kirollos.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
-
-        public EmployeeController(IEmployeeRepository employeeRepository)
+        private readonly IDepartmentRepository _departmentRepository;
+        public EmployeeController(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository)
         {
             _employeeRepository = employeeRepository;
+            _departmentRepository = departmentRepository;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
             var result = _employeeRepository.GetAll().ToList();
+
+            //ViewData["Message"] = "Hello from ViewData";
+            //ViewBag.Message = "Hello from ViewBag";
+
             return View(result);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
+            var departments = _departmentRepository.GetAll();
+            ViewData["departments"] = departments;
+
             return View();
         }
 
@@ -46,11 +54,13 @@ namespace Company.Kirollos.PL.Controllers
                     IsActive = model.IsActive,
                     IsDeleted = model.IsDeleted,
                     HiringDate = model.HiringDate,
-                    CreateAt = model.CreateAt
+                    CreateAt = model.CreateAt,
+                    DepartmentId = model.DepartmentId
                 };
                 var count = _employeeRepository.Add(Employee);
                 if (count > 0)
                 {
+                    TempData["Message"] = "Employee is Created !!";
                     return Redirect(nameof(Index));
                 }
             }
@@ -64,12 +74,18 @@ namespace Company.Kirollos.PL.Controllers
             var Employee = _employeeRepository.Get(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
 
+            var departments = _departmentRepository.Get(id.Value);
+            ViewData["departments"] = departments;
+
             return View(viewName, Employee);
         }
 
         public IActionResult Update(int? id)
         {
             if (id is null) return BadRequest("Invalid Id");
+
+            var departments = _departmentRepository.GetAll();
+            ViewData["departments"] = departments;
 
             var Employee = _employeeRepository.Get(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
@@ -85,7 +101,8 @@ namespace Company.Kirollos.PL.Controllers
                 IsActive = Employee.IsActive,
                 IsDeleted = Employee.IsDeleted,
                 HiringDate = Employee.HiringDate,
-                CreateAt = Employee.CreateAt
+                CreateAt = Employee.CreateAt,
+                DepartmentId = Employee.DepartmentId
             };
 
             return View(employee);
@@ -109,7 +126,8 @@ namespace Company.Kirollos.PL.Controllers
                     IsActive = model.IsActive,
                     IsDeleted = model.IsDeleted,
                     HiringDate = model.HiringDate,
-                    CreateAt = model.CreateAt
+                    CreateAt = model.CreateAt,
+                    DepartmentId = model.DepartmentId
                 };
                 var count = _employeeRepository.Update(employee);
                 if (count > 0)

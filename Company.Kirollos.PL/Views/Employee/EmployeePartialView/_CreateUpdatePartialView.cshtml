@@ -1,5 +1,9 @@
 ﻿@model CreateEmployeeDto
 
+@{
+    var departments = new SelectList(ViewData["departments"] as IEnumerable<Department> ,"Id" , "Name");
+}
+
 
 <div class="my-3">
     <label asp-for="Name" class="col-form-label"></label>
@@ -9,26 +13,26 @@
 
 <div class="my-3">
     <label asp-for="Age" class="col-form-label"></label>
-    <input asp-for="Age" class="form-control"  />
+    <input asp-for="Age" class="form-control" />
     <span asp-validation-for="Age" class="text-danger"></span>
 </div>
 
 
 <div class="my-3">
     <label asp-for="Email" class="col-form-label"></label>
-    <input asp-for="Email" class="form-control"  />
+    <input asp-for="Email" class="form-control" />
     <span asp-validation-for="Email" class="text-danger"></span>
 </div>
 
 <div class="my-3">
     <label asp-for="Adress" class="col-form-label"></label>
-    <input asp-for="Adress" class="form-control"  />
+    <input asp-for="Adress" class="form-control" />
     <span asp-validation-for="Adress" class="text-danger"></span>
 </div>
 
 <div class="my-3">
     <label asp-for="Phone" class="col-form-label"></label>
-    <input asp-for="Phone" class="form-control"  />
+    <input asp-for="Phone" class="form-control" />
     <span asp-validation-for="Phone" class="text-danger"></span>
 </div>
 
@@ -60,4 +64,11 @@
     <label asp-for="CreateAt" class="col-form-label"></label>
     <input asp-for="CreateAt" class="form-control" />
     <span asp-validation-for="CreateAt" class="text-danger"></span>
+</div>
+
+<div>
+    <label asp-for="DepartmentId" class="col-form-label"></label>
+    <select asp-for="DepartmentId" asp-items="departments" class="form-control">
+        <option value="">--- Select Department ---</option>
+    </select>
 </div>
