@@ -1,6 +1,8 @@
+using AutoMapper;
 using Company.Kirollos.BLL.Interfaces;
 using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Data.Contexts;
+using Company.Kirollos.PL.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -21,6 +23,14 @@ namespace Company.Kirollos.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddAutoMapper(typeof(EmployeeProfile));
+
+            builder.Services.AddAutoMapper(typeof(DepartmentProfile));
+            // Life time 
+            // 1. builder.Services.AddScoped();    : life time per Request - new object
+            // 2. builder.Services.AddSingleton(); : life time per Operation
+            // 3. builder.Services.AddTransient(); : life time per App
 
             var app = builder.Build();
 

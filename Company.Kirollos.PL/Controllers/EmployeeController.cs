@@ -1,4 +1,5 @@
-﻿using Company.Kirollos.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.Kirollos.BLL.Interfaces;
 using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
@@ -10,10 +11,15 @@ namespace Company.Kirollos.PL.Controllers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IDepartmentRepository _departmentRepository;
-        public EmployeeController(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository)
+        private readonly IMapper _mapper;
+
+        public EmployeeController(IEmployeeRepository employeeRepository
+            , IDepartmentRepository departmentRepository
+            , IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _departmentRepository = departmentRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -53,21 +59,27 @@ namespace Company.Kirollos.PL.Controllers
             if (model is null) return BadRequest();
             if (ModelState.IsValid)
             {
-                var Employee = new Employee()
-                {
-                    Name = model.Name,
-                    Age = model.Age,
-                    Email = model.Email,
-                    Adress = model.Adress,
-                    Phone = model.Phone,
-                    Salary = model.Salary,
-                    IsActive = model.IsActive,
-                    IsDeleted = model.IsDeleted,
-                    HiringDate = model.HiringDate,
-                    CreateAt = model.CreateAt,
-                    DepartmentId = model.DepartmentId
-                };
-                var count = _employeeRepository.Add(Employee);
+                #region Manual mapping 
+                //var employee = new Employee()
+                //{
+                //    Name = model.Name,
+                //    Age = model.Age,
+                //    Email = model.Email,
+                //    Adress = model.Adress,
+                //    Phone = model.Phone,
+                //    Salary = model.Salary,
+                //    IsActive = model.IsActive,
+                //    IsDeleted = model.IsDeleted,
+                //    HiringDate = model.HiringDate,
+                //    CreateAt = model.CreateAt,
+                //    DepartmentId = model.DepartmentId
+                //};
+
+                #endregion
+
+                var employee = _mapper.Map<Employee>(model);
+
+                var count = _employeeRepository.Add(employee);
                 if (count > 0)
                 {
                     TempData["Message"] = "Employee is Created !!";
@@ -100,51 +112,38 @@ namespace Company.Kirollos.PL.Controllers
             var Employee = _employeeRepository.Get(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
 
-            var employee = new CreateEmployeeDto()
-            {
-                Name = Employee.Name,
-                Age = Employee.Age,
-                Email = Employee.Email,
-                Adress = Employee.Adress,
-                Phone = Employee.Phone,
-                Salary = Employee.Salary,
-                IsActive = Employee.IsActive,
-                IsDeleted = Employee.IsDeleted,
-                HiringDate = Employee.HiringDate,
-                CreateAt = Employee.CreateAt,
-                DepartmentId = Employee.DepartmentId
-            };
+            #region Manual mapping
+            //var employee = new CreateEmployeeDto()
+            //{
+            //    Name = Employee.Name,
+            //    Age = Employee.Age,
+            //    Email = Employee.Email,
+            //    Adress = Employee.Adress,
+            //    Phone = Employee.Phone,
+            //    Salary = Employee.Salary,
+            //    IsActive = Employee.IsActive,
+            //    IsDeleted = Employee.IsDeleted,
+            //    HiringDate = Employee.HiringDate,
+            //    CreateAt = Employee.CreateAt,
+            //    DepartmentId = Employee.DepartmentId
+            //}; 
+            #endregion
 
+            var employee = _mapper.Map<CreateEmployeeDto>(Employee);
             return View(employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update([FromRoute] int id, CreateEmployeeDto model)
+        public IActionResult Update([FromRoute] int id, Employee model)
         {
             if (ModelState.IsValid)
             {
-                var employee = new Employee()
-                {
-                    Id = id,
-                    Name = model.Name,
-                    Age = model.Age,
-                    Email = model.Email,
-                    Adress = model.Adress,
-                    Phone = model.Phone,
-                    Salary = model.Salary,
-                    IsActive = model.IsActive,
-                    IsDeleted = model.IsDeleted,
-                    HiringDate = model.HiringDate,
-                    CreateAt = model.CreateAt,
-                    DepartmentId = model.DepartmentId
-                };
-                var count = _employeeRepository.Update(employee);
+                var count = _employeeRepository.Update(model);
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }
-
             }
             return View(model);
         }

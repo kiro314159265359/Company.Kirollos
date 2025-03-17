@@ -1,4 +1,5 @@
-﻿using Company.Kirollos.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.Kirollos.BLL.Interfaces;
 using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
@@ -11,14 +12,16 @@ namespace Company.Kirollos.PL.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly IMapper _mapper;
 
         // ASk clr to create object from DepartmentRepository 
         // Dependency injection
         // here DepartmentRepository isn't a controller but we want to create object 
         // so we add Scooped func 
-        public DepartmentController(IDepartmentRepository departmentRepository)
+        public DepartmentController(IDepartmentRepository departmentRepository , IMapper mapper)
         {
             _departmentRepository = departmentRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -41,12 +44,17 @@ namespace Company.Kirollos.PL.Controllers
         {
             if (ModelState.IsValid) // Server side validation
             {
-                var department = new Department()
-                {
-                    Code = model.Code,
-                    Name = model.Name,
-                    CreateAt = model.CreateAt
-                };
+                #region Manual mapping
+                //var department = new Department()
+                //{
+                //    Code = model.Code,
+                //    Name = model.Name,
+                //    CreateAt = model.CreateAt
+                //}; 
+                #endregion
+
+                var department = _mapper.Map<Department>(model);
+
                 var count = _departmentRepository.Add(department);
                 if (count > 0)
                 {
@@ -73,12 +81,15 @@ namespace Company.Kirollos.PL.Controllers
             var department = _departmentRepository.Get(id.Value);
             if (department is null) return NotFound(new { StatusCode = 404, message = $"Department with Id:{id} Not Found!" });
 
-            var departmentDto = new CreateDepartmentDto()
-            {
-                Code = department.Code,
-                Name = department.Name,
-                CreateAt = department.CreateAt
-            };
+            #region Manual mapping
+            //var departmentDto = new CreateDepartmentDto()
+            //{
+            //    Code = department.Code,
+            //    Name = department.Name,
+            //    CreateAt = department.CreateAt
+            //};
+            #endregion
+            var departmentDto = _mapper.Map<CreateDepartmentDto>(department);
 
             return View(departmentDto);
         }
@@ -110,14 +121,9 @@ namespace Company.Kirollos.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                var department = new Department()
-                {
-                    Id = id,
-                    Code = model.Code,
-                    Name = model.Name,
-                    CreateAt = model.CreateAt
-                };
-                var count = _departmentRepository.Update(department);
+                var departmentDto = _mapper.Map<Department>(model);
+                departmentDto.Id = id;
+                var count = _departmentRepository.Update(departmentDto);
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -129,25 +135,29 @@ namespace Company.Kirollos.PL.Controllers
         [HttpGet]
         public IActionResult Delete(int? id)
         {
+            #region Keep Code Clean
             //    if (id is null) return BadRequest("Invalid Id");
             //    var department = _departmentRepository.Get(id.Value);
-            //    if (department is null) return NotFound(new { StatusCode = 404, message = $"Department with Id:{id} Not Found!" });
+            //    if (department is null) return NotFound(new { StatusCode = 404, message = $"Department with Id:{id} Not Found!" }); 
+            #endregion
             return Details(id, "Delete");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int id, Department model)
+        public IActionResult Delete([FromRoute] int id, CreateDepartmentDto model)
         {
             if (ModelState.IsValid)
             {
-                if (id != model.Id) return BadRequest();
-                var count = _departmentRepository.Delete(model);
+                var department = _mapper.Map<Department>(model);
+                department.Id = id;
+                if (id != department.Id) return BadRequest();
+                var count = _departmentRepository.Delete(department);
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }
-            }
+            }          
             return View(model);
         }
 
