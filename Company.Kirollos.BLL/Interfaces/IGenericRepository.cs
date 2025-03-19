@@ -15,10 +15,10 @@ namespace Company.Kirollos.BLL.Interfaces
 
         public T? Get(int id); // may not return a department
 
-        public int Add(T model);
+        public void Add(T model);
 
-        public int Update(T model);
+        public void Update(T model);
 
-        public int Delete(T model);
+        public void Delete(T model);
     }
 }
