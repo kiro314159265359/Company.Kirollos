@@ -1,25 +1,35 @@
 ﻿using AutoMapper;
+using Company.Kirollos.BLL;
 using Company.Kirollos.BLL.Interfaces;
 using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Numerics;
 
 namespace Company.Kirollos.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        #region GenericRepo
+        //private readonly IEmployeeRepository _employeeRepository;
+        //private readonly IDepartmentRepository _departmentRepository; 
+        #endregion
         private readonly IMapper _mapper;
-
+        private readonly IUnitOfWork _unitOfWork;
         public EmployeeController(
-              IEmployeeRepository employeeRepository
-            , IDepartmentRepository departmentRepository
-            , IMapper mapper)
+        #region GenericRepo
+              //  IEmployeeRepository employeeRepository
+              //, IDepartmentRepository departmentRepository 
+        #endregion
+              IUnitOfWork unitOfWork
+             ,IMapper mapper)
         {
-            _employeeRepository = employeeRepository;
-            _departmentRepository = departmentRepository;
+            #region GenericRepo
+            //_employeeRepository = employeeRepository;
+            //_departmentRepository = departmentRepository; 
+            #endregion
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -30,11 +40,11 @@ namespace Company.Kirollos.PL.Controllers
 
             if (!string.IsNullOrEmpty(SearchInput))
             {
-                employees = _employeeRepository.GetByName(SearchInput);
+                employees = _unitOfWork.EmployeeRepository.GetByName(SearchInput)!;
             }
             else
             {
-                employees = _employeeRepository.GetAll();
+                employees = _unitOfWork.EmployeeRepository.GetAll();
             }
             #region Viewbag
 
@@ -47,7 +57,7 @@ namespace Company.Kirollos.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var departments = _departmentRepository.GetAll();
+            var departments = _unitOfWork.DepartmentRepository.GetAll();
             ViewData["departments"] = departments;
 
             return View();
@@ -80,7 +90,8 @@ namespace Company.Kirollos.PL.Controllers
 
                 var employee = _mapper.Map<Employee>(model);
 
-                var count = _employeeRepository.Add(employee);
+                _unitOfWork.EmployeeRepository.Add(employee);
+                var count = _unitOfWork.Complete();
                 if (count > 0)
                 {
                     TempData["Message"] = "Employee is Created !!";
@@ -94,7 +105,7 @@ namespace Company.Kirollos.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var Employee = _employeeRepository.Get(id.Value);
+            var Employee = _unitOfWork.EmployeeRepository.Get(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
 
             return View(viewName, Employee);
@@ -104,10 +115,10 @@ namespace Company.Kirollos.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var departments = _departmentRepository.GetAll();
+            var departments = _unitOfWork.DepartmentRepository.GetAll();
             ViewData["departments"] = departments;
 
-            var Employee = _employeeRepository.Get(id.Value);
+            var Employee = _unitOfWork.EmployeeRepository.Get(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
 
             #region Manual mapping
@@ -139,7 +150,8 @@ namespace Company.Kirollos.PL.Controllers
             {
                 var employee = _mapper.Map<Employee>(model);
                 employee.Id = id;
-                var count = _employeeRepository.Update(employee);
+                _unitOfWork.EmployeeRepository.Update(employee);
+                var count = _unitOfWork.Complete();
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -162,7 +174,8 @@ namespace Company.Kirollos.PL.Controllers
 
             if (id == employee.Id)
             {
-                var count = _employeeRepository.Delete(employee);
+                _unitOfWork.EmployeeRepository.Delete(employee);
+                var count = _unitOfWork.Complete();
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
