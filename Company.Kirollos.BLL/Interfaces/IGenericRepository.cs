@@ -11,11 +11,11 @@ namespace Company.Kirollos.BLL.Interfaces
     {
         // i want the T to be either employee or department only so i have to add constraint 
         // but we cant add two types it only can be one type  where T : Employee , Department
-        public IEnumerable<T> GetAll(); // In DAL 
+        public Task<IEnumerable<T>> GetAllAsync(); // In DAL 
 
-        public T? Get(int id); // may not return a department
+        public Task<T?> GetAsync(int id); // may not return a department
 
-        public void Add(T model);
+        public Task AddAsync(T model);
 
         public void Update(T model);
 

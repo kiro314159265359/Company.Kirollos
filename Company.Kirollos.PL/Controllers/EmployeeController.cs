@@ -4,8 +4,11 @@ using Company.Kirollos.BLL.Interfaces;
 using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
+using Company.Kirollos.PL.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace Company.Kirollos.PL.Controllers
 {
@@ -23,7 +26,7 @@ namespace Company.Kirollos.PL.Controllers
               //, IDepartmentRepository departmentRepository 
         #endregion
               IUnitOfWork unitOfWork
-             ,IMapper mapper)
+             , IMapper mapper)
         {
             #region GenericRepo
             //_employeeRepository = employeeRepository;
@@ -34,17 +37,17 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string? SearchInput)
+        public async Task<IActionResult> Index(string? SearchInput)
         {
             IEnumerable<Employee> employees;
 
             if (!string.IsNullOrEmpty(SearchInput))
             {
-                employees = _unitOfWork.EmployeeRepository.GetByName(SearchInput)!;
+                employees = await _unitOfWork.EmployeeRepository.GetByNameAsync(SearchInput)!;
             }
             else
             {
-                employees = _unitOfWork.EmployeeRepository.GetAll();
+                employees = await _unitOfWork.EmployeeRepository.GetAllAsync();
             }
             #region Viewbag
 
@@ -55,9 +58,9 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewData["departments"] = departments;
 
             return View();
@@ -65,11 +68,16 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreateEmployeeDto model)
+        public async Task<IActionResult> Create(CreateEmployeeDto model)
         {
             if (model is null) return BadRequest();
             if (ModelState.IsValid)
             {
+                if (model.Image is not null)
+                {
+                    model.ImageName = DocumentSettings.UploadFile(model.Image, "images");
+                }
+
                 #region Manual mapping 
                 //var employee = new Employee()
                 //{
@@ -90,8 +98,8 @@ namespace Company.Kirollos.PL.Controllers
 
                 var employee = _mapper.Map<Employee>(model);
 
-                _unitOfWork.EmployeeRepository.Add(employee);
-                var count = _unitOfWork.Complete();
+                await _unitOfWork.EmployeeRepository.AddAsync(employee);
+                var count = await _unitOfWork.CompleteAsync();
                 if (count > 0)
                 {
                     TempData["Message"] = "Employee is Created !!";
@@ -101,24 +109,24 @@ namespace Company.Kirollos.PL.Controllers
             return View(model);
         }
 
-        public IActionResult Details(int? id, string viewName = "Details")
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var Employee = _unitOfWork.EmployeeRepository.Get(id.Value);
+            var Employee = await _unitOfWork.EmployeeRepository.GetAsync(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
 
             return View(viewName, Employee);
         }
 
-        public IActionResult Update(int? id)
+        public async Task<IActionResult> Update(int? id)
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewData["departments"] = departments;
 
-            var Employee = _unitOfWork.EmployeeRepository.Get(id.Value);
+            var Employee = await _unitOfWork.EmployeeRepository.GetAsync(id.Value);
             if (Employee is null) return NotFound(new { StatusCode = 404, Message = "Can't Find Employee!" });
 
             #region Manual mapping
@@ -144,14 +152,25 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update([FromRoute] int id, CreateEmployeeDto model)
+        public async Task<IActionResult> Update([FromRoute] int id, CreateEmployeeDto model)
         {
             if (ModelState.IsValid)
             {
+                if (model.ImageName is not null && model.Image is not null)
+                {
+                    DocumentSettings.DeleteFile(model.ImageName, "images");
+                }
+
+                if (model.Image is not null)
+                {
+                    model.ImageName = DocumentSettings.UploadFile(model.Image, "images");
+                }
+
                 var employee = _mapper.Map<Employee>(model);
                 employee.Id = id;
+
                 _unitOfWork.EmployeeRepository.Update(employee);
-                var count = _unitOfWork.Complete();
+                var count = await _unitOfWork.CompleteAsync();
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -161,23 +180,27 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int id, Employee employee)
+        public async Task<IActionResult> Delete([FromRoute] int id, Employee employee)
         {
             if (!ModelState.IsValid) return BadRequest();
 
             if (id == employee.Id)
             {
                 _unitOfWork.EmployeeRepository.Delete(employee);
-                var count = _unitOfWork.Complete();
+                var count = await _unitOfWork.CompleteAsync();
                 if (count > 0)
                 {
+                    if (employee.ImageName is not null)
+                    {
+                        DocumentSettings.DeleteFile(employee.ImageName, "images");
+                    }
                     return RedirectToAction(nameof(Index));
                 }
             }
