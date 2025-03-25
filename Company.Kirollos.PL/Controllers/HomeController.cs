@@ -1,11 +1,15 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Company.Kirollos.PL.Models;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Company.Kirollos.PL.Controllers;
 
+[Authorize]
 public class HomeController : Controller
 {
+   
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger)

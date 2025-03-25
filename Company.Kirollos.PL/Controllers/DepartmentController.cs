@@ -5,12 +5,14 @@ using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using System.Threading.Tasks;
 
 namespace Company.Kirollos.PL.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         #region .

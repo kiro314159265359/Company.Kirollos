@@ -8,10 +8,12 @@ namespace Company.Kirollos.PL.Controllers
 {
     public class AuthController : Controller
     {
-        private UserManager<AppUser> _UserManager { get; }
-        public AuthController(UserManager<AppUser> userManager)
+        private readonly UserManager<AppUser> _UserManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        public AuthController(UserManager<AppUser> userManager , SignInManager<AppUser> signInManager)
         {
             _UserManager = userManager;
+            _signInManager = signInManager;
         }
 
         #region SingUp
@@ -63,11 +65,46 @@ namespace Company.Kirollos.PL.Controllers
 
 
         #region SignIn
+        [HttpGet]
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignIn(SignInDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _UserManager.FindByEmailAsync(model.Email);
+                if (user is not null) 
+                {
+                    bool flag = await _UserManager.CheckPasswordAsync(user, model.Password);
+                    if (flag) 
+                    {
+                        // Sign in using Tokin
+                        var  result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RemmemberMe , false);
+                        if (result.Succeeded) 
+                        {
+                            return RedirectToAction(nameof(HomeController.Index), "Home");
+                        }                   
+                    }
+                }
+                ModelState.AddModelError("", "Invalid login !");
+            }
+            return View(model);
+        }
 
         #endregion
 
         #region SignOut
-
+        [HttpGet]
+        public new async Task<IActionResult> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(SignIn) , "Auth");
+        }
         #endregion
     }
 }

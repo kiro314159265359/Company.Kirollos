@@ -5,6 +5,7 @@ using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
 using Company.Kirollos.PL.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Numerics;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Company.Kirollos.PL.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         #region GenericRepo
