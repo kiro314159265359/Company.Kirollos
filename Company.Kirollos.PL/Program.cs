@@ -3,7 +3,9 @@ using Company.Kirollos.BLL;
 using Company.Kirollos.BLL.Interfaces;
 using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Data.Contexts;
+using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Mapping;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -35,6 +37,9 @@ namespace Company.Kirollos.PL
             // 1. builder.Services.AddScoped();    : life time per Request - new object
             // 2. builder.Services.AddSingleton(); : life time per Operation
             // 3. builder.Services.AddTransient(); : life time per App
+
+            builder.Services.AddIdentity<AppUser , IdentityRole>()
+                            .AddEntityFrameworkStores<CompanyDbContext>();
 
             var app = builder.Build();
 

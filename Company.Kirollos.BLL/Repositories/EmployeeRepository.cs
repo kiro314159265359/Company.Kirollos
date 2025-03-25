@@ -59,8 +59,9 @@ namespace Company.Kirollos.BLL.Repositories
         public async Task<List<Employee>> GetByNameAsync(string name)
         {
             return await _context.Employees.Include(E => E.Department)
-                           .Where(E => E.Name.ToLower().Contains(name.ToLower()))
-                           .ToListAsync();
+                                           .Where(E => E.Name.ToLower()
+                                           .Contains(name.ToLower()))
+                                           .ToListAsync();
         }
     }
 }

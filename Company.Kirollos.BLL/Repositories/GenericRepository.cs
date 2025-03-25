@@ -17,7 +17,6 @@ namespace Company.Kirollos.BLL.Repositories
         {
             _context = context;
         }
-
         public async Task AddAsync(T model)
         {
            await _context.Set<T>().AddAsync(model);
@@ -27,7 +26,6 @@ namespace Company.Kirollos.BLL.Repositories
         {
             _context.Set<T>().Remove(model);
         }
-
         public async Task<T?> GetAsync(int id)
         {
             if (typeof(T) == typeof(Employee))
