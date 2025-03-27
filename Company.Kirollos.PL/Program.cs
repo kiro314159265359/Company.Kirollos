@@ -39,7 +39,8 @@ namespace Company.Kirollos.PL
             // 3. builder.Services.AddTransient(); : life time per App
 
             builder.Services.AddIdentity<AppUser , IdentityRole>()
-                            .AddEntityFrameworkStores<CompanyDbContext>();
+                            .AddEntityFrameworkStores<CompanyDbContext>()
+                            .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(config =>
                 config.LoginPath = "/Auth/SignIn"

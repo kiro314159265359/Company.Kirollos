@@ -23,5 +23,12 @@
 			<input type="submit" value="SIGNIN">
 		</form>
 		<p>Don't have an account? <a asp-action="SignUp"> Create New Account ?</a></p>
+		<br />
+		<p> <a asp-action="ForgetPassword" > Forgot Password ?</a></p>
 	</div>
 </div>
+
+@section ValidationSection {
+	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

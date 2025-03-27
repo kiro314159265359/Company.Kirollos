@@ -1,5 +1,6 @@
 ﻿using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
+using Company.Kirollos.PL.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace Company.Kirollos.PL.Controllers
     {
         private readonly UserManager<AppUser> _UserManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public AuthController(UserManager<AppUser> userManager , SignInManager<AppUser> signInManager)
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _UserManager = userManager;
             _signInManager = signInManager;
@@ -33,10 +34,10 @@ namespace Company.Kirollos.PL.Controllers
             {
                 var user = await _UserManager.FindByNameAsync(model.UserName);
 
-                if (user == null) 
+                if (user == null)
                 {
                     user = await _UserManager.FindByEmailAsync(model.Email);
-                    if(user is null)
+                    if (user is null)
                     {
                         user = new AppUser()
                         {
@@ -49,7 +50,7 @@ namespace Company.Kirollos.PL.Controllers
                         var result = await _UserManager.CreateAsync(user, model.Password);
                         if (result.Succeeded)
                         {
-                            return RedirectToAction("SingIn");
+                            return RedirectToAction("SignIn");
                         }
                         foreach (var error in result.Errors)
                         {
@@ -57,12 +58,11 @@ namespace Company.Kirollos.PL.Controllers
                         }
                     }
                 }
-                ModelState.AddModelError("","Invalid SingUp");
+                ModelState.AddModelError("", "Invalid SingUp");
             }
             return View(model);
         }
         #endregion
-
 
         #region SignIn
         [HttpGet]
@@ -78,17 +78,17 @@ namespace Company.Kirollos.PL.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _UserManager.FindByEmailAsync(model.Email);
-                if (user is not null) 
+                if (user is not null)
                 {
                     bool flag = await _UserManager.CheckPasswordAsync(user, model.Password);
-                    if (flag) 
+                    if (flag)
                     {
                         // Sign in using Tokin
-                        var  result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RemmemberMe , false);
-                        if (result.Succeeded) 
+                        var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RemmemberMe, false);
+                        if (result.Succeeded)
                         {
                             return RedirectToAction(nameof(HomeController.Index), "Home");
-                        }                   
+                        }
                     }
                 }
                 ModelState.AddModelError("", "Invalid login !");
@@ -103,7 +103,99 @@ namespace Company.Kirollos.PL.Controllers
         public new async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction(nameof(SignIn) , "Auth");
+            return RedirectToAction(nameof(SignIn), "Auth");
+        }
+        #endregion
+
+        #region Forget Password
+
+        [HttpGet]
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendResetUrlPassword(ForgetPasswordDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _UserManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+                    // Generate tokin 
+                    var token = await _UserManager.GeneratePasswordResetTokenAsync(user);
+
+                    // Create URL
+                    var url = Url.Action("ResetPassword", "Auth", new { email = model.Email, token }, Request.Scheme);
+
+                    // Create Email
+                    var email = new Email()
+                    {
+                        To = model.Email,
+                        Subject = "Reset Password",
+                        Body = url
+                    };
+                    // Send Email
+                    var flag = EmailSettings.SendEmail(email);
+                    if (flag)
+                    {
+                        return RedirectToAction("CheackYourInbox");
+                    }
+                }
+            }
+
+            ModelState.AddModelError("", "Invalid Resetting for password");
+            return View("ForgetPassword", model);
+        }
+
+        [HttpGet]
+        public IActionResult CheackYourInbox()
+        {
+            return View();
+        }
+
+
+        #endregion
+
+        #region Reset Password
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string token)
+        {
+            TempData["email"] = email;
+            TempData["token"] = token;
+
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto Password)
+        {
+            if (ModelState.IsValid)
+            {
+                var email = TempData["email"] as string;
+                var token = TempData["token"] as string;
+
+                if (email is null || token is null) { return BadRequest("Error in cradentials"); };
+
+                var user = await _UserManager.FindByEmailAsync(email);
+                if (user is not null)
+                {
+                    var result = await _UserManager.ResetPasswordAsync(user, token, Password.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("SignIn");
+                    }
+                }
+
+                ModelState.AddModelError("", "Invalid Operation");
+            }
+
+            return View();
         }
         #endregion
     }
