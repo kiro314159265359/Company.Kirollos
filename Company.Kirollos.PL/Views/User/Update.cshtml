@@ -1,0 +1,24 @@
+﻿
+@model UserToReturnDto
+
+@{
+    ViewData["Title"] = "Update";
+}
+
+<h1>Update Page</h1>
+
+<form asp-action="Update" method="post" enctype="multipart/form-data">
+
+    <partial name="EmployeePartialView/_CreateUpdatePartialView" />
+
+
+    <div class="my-3">
+        <input type="submit" value="Update" class="btn btn-outline-warning" />
+        <a asp-action="Index" asp-controller="User" class="btn btn-light">Back To List</a>
+    </div>
+</form>
+
+@section ValidationSection {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
