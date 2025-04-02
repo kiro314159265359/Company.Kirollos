@@ -50,6 +50,7 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "HR,Admin")]
         public async Task<IActionResult> Create(CreateDepartmentDto model)
         {
             if (ModelState.IsValid) // Server side validation
@@ -107,6 +108,7 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "HR,Admin")]
         #region UpdateWays
         //public IActionResult Update([FromRoute] int id, CreateDepartmentDto model)
         //{
@@ -157,6 +159,7 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "HR,Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id, Department model)
         {
             if (ModelState.IsValid)

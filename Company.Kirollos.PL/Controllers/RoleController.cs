@@ -54,6 +54,7 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(RoleToReturnDto model)
         {
             if (model is null) return BadRequest();
@@ -93,6 +94,7 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(string? id)
         {
             if (string.IsNullOrEmpty(id)) return BadRequest("Invalid Id");
@@ -102,7 +104,7 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromRoute] string id, RoleToReturnDto model)
         {
             if (ModelState.IsValid)
@@ -134,7 +136,7 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] string id, RoleToReturnDto model)
         {
             if (ModelState.IsValid)
@@ -188,7 +190,7 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddOrRemoveUsers(string roleId, List<UsersEnrollDto> users)
         {
             var role = await _roleManager.FindByIdAsync(roleId);

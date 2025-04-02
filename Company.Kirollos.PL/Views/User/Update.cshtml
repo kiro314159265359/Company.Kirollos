@@ -14,7 +14,7 @@
 
     <div class="my-3">
         <input type="submit" value="Update" class="btn btn-outline-warning" />
-        <a asp-action="Index" asp-controller="User" class="btn btn-light">Back To List</a>
+        <a asp-action="Index" asp-route-id="@Model.Id" asp-controller="User" class="btn btn-light">Back To List</a>
     </div>
 </form>
 
