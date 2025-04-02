@@ -14,9 +14,24 @@ html {
 
 html {
   position: relative;
-  min-height: 100%;
+  min-height: 40%;
 }
 
 body {
   margin-bottom: 60px;
+}
+
+.google-btn {
+    display: block;
+    margin: 20px auto;
+    border-radius: 5px;
+    width: 50%;
+    text-align: center;
+    padding: 7px;
+    text-decoration: none;
+}
+
+.google-logo {
+    max-height: 40px;
+    vertical-align: middle;
 }

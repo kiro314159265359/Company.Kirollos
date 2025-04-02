@@ -5,10 +5,13 @@ using Company.Kirollos.BLL.Repositories;
 using Company.Kirollos.DAL.Data.Contexts;
 using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Mapping;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace Company.Kirollos.PL
 {
@@ -22,9 +25,9 @@ namespace Company.Kirollos.PL
             builder.Services.AddControllersWithViews();
             //builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>(); // Allow Dependency injection for department
             //builder.Services.AddScoped<IEmployeeRepository,EmployeeRepository>();     // Allow Dependency injection for Employee
-            
-            builder.Services.AddScoped<IUnitOfWork , UnitOfWork>();
-            
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -38,13 +41,31 @@ namespace Company.Kirollos.PL
             // 2. builder.Services.AddSingleton(); : life time per Operation
             // 3. builder.Services.AddTransient(); : life time per App
 
-            builder.Services.AddIdentity<AppUser , IdentityRole>()
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
                             .AddEntityFrameworkStores<CompanyDbContext>()
                             .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(config =>
                 config.LoginPath = "/Auth/SignIn"
                 );
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+                .AddGoogle(googleOptions =>
+                {
+                    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                    googleOptions.CallbackPath = "/signin-google";
+                })
+                .AddFacebook(facebookOptions =>
+                {
+                    facebookOptions.ClientId = builder.Configuration["Authentication:Facebook:ClientId"];
+                    facebookOptions.ClientSecret = builder.Configuration["Authentication:Facebook:ClientSecret"];
+                    facebookOptions.CallbackPath = "/signin-facebook";
+                });
 
             var app = builder.Build();
 

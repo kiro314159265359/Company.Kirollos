@@ -5,10 +5,12 @@
     ViewData["Title"] = "SignIn";
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
+<link rel="stylesheet" href="~/css/site.css" type="text/css" />
 
 <div class="main-agileinfo">
 	<div class="agileits-top">
 		<div asp-validation-summary="All" class="m-3 alert alert-info"></div>
+
 
 		<form asp-action="SignIn" method="post">
 			<input class="text email" asp-for="Email" placeholder="Email" required="">
@@ -22,6 +24,20 @@
 			</div>
 			<input type="submit" value="SIGNIN">
 		</form>
+		@* Sign in with google  *@
+		<br />
+		<a asp-action="GoogleLogin" class="google-btn">
+			<img src="~/images/googlelogo.png" alt="Google Logo" class="google-logo" />
+		</a>
+		<br />
+
+		<br />
+		<a asp-action="FacebookLogin"
+		   style="display: block; margin: 0 auto; text-align: center; color: white; background-color: #3b5998; padding: 10px; border-radius: 5px; width: 50%; text-decoration: none;">
+			SignIn with Facebook
+		</a>
+		<br />
+
 		<p>Don't have an account? <a asp-action="SignUp"> Create New Account ?</a></p>
 		<br />
 		<p> <a asp-action="ForgetPassword" > Forgot Password ?</a></p>

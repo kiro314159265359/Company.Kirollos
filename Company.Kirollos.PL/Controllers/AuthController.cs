@@ -1,8 +1,13 @@
 ﻿using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
 using Company.Kirollos.PL.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Company.Kirollos.PL.Controllers
@@ -66,6 +71,7 @@ namespace Company.Kirollos.PL.Controllers
 
         #region SignIn
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult SignIn()
         {
             return View();
@@ -196,6 +202,114 @@ namespace Company.Kirollos.PL.Controllers
             }
 
             return View();
+        }
+        #endregion
+
+        #region Google SignIn
+        public IActionResult GoogleLogin()
+        {
+            var prop = new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action("GoogleResponse")
+            };
+            return Challenge(prop , GoogleDefaults.AuthenticationScheme);
+        }
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+
+            if (!result.Succeeded)
+                return RedirectToAction("SignIn", "Auth");
+
+            var externalUser = result.Principal;
+
+            var email = externalUser.FindFirstValue(ClaimTypes.Email);
+
+            var givenName = externalUser.FindFirstValue(ClaimTypes.GivenName);
+            var surname = externalUser.FindFirstValue(ClaimTypes.Surname);
+            var name = externalUser.FindFirstValue(ClaimTypes.Name);
+
+            var user = await _UserManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    FirstName = givenName ?? name?.Split(' ').FirstOrDefault() ?? "GoogleUser",
+                    LastName = surname ?? (name != null && name.Split(' ').Length > 1 ? name.Split(' ').Last() : "User")
+                };
+
+                var createResult = await _UserManager.CreateAsync(user);
+
+                if (!createResult.Succeeded)
+                {
+                    foreach (var error in createResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View("SignIn");
+                }
+            }
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        #endregion
+
+        #region Facebook SignIn
+        public IActionResult FacebookLogin()
+        {
+            var prop = new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action("FacebookResponse")
+            };
+            return Challenge(prop, FacebookDefaults.AuthenticationScheme);
+        }
+
+        public async Task<IActionResult> FacebookResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+            if (!result.Succeeded)
+                return RedirectToAction("SignIn", "Auth");
+
+            var externalUser = result.Principal;
+            var email = externalUser.FindFirstValue(ClaimTypes.Email);
+            var givenName = externalUser.FindFirstValue(ClaimTypes.GivenName);
+            var surname = externalUser.FindFirstValue(ClaimTypes.Surname);
+            var name = externalUser.FindFirstValue(ClaimTypes.Name);
+
+            var user = await _UserManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new AppUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    FirstName = givenName ?? name?.Split(' ').FirstOrDefault() ?? "FacebookUser",
+                    LastName = surname ?? (name != null && name.Split(' ').Length > 1 ? name.Split(' ').Last() : "User")
+                };
+
+                var createResult = await _UserManager.CreateAsync(user);
+
+                if (!createResult.Succeeded)
+                {
+                    foreach (var error in createResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View("SignIn");
+                }
+            }
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return RedirectToAction("Index", "Home");
         }
         #endregion
     }
