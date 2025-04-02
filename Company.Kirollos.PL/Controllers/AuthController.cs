@@ -312,5 +312,13 @@ namespace Company.Kirollos.PL.Controllers
             return RedirectToAction("Index", "Home");
         }
         #endregion
+
+        #region AccessDenied
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+        #endregion
     }
 }

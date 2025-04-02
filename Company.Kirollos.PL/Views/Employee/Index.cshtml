@@ -53,7 +53,7 @@
 <br />
 @if (Model.Count() > 0)
 {
-    <table class="table table-striped table-bordered table-hover">
+    <table id="table" class="table table-striped table-bordered table-hover">
 
         <thead>
             <tr>
@@ -79,7 +79,7 @@
             {
                 <tr>
                     <td>
-                        <img src="~/files/images/@item.ImageName" width="100px" height="100px"/>
+                        <img src="~/files/images/@item.ImageName" width="100px" height="100px" />
                     </td>
                     <td>@item.Name</td>
                     <td>@item.Age</td>
@@ -111,3 +111,24 @@ else
         there are no Employees :(
     </div>
 }
+
+
+<script>
+    const SearchBar = $('#SearchInput');
+    const table = $('#table');
+    SearchBar.on('keyup', function(event) {
+        var searchvalue = SearchBar.val();
+        $.ajax({
+            url: '/Employee/Search',
+            type: 'GET',
+            data: { SearchInput: searchvalue },
+            success: function(result) {
+                table.html(result);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
+
+</script>

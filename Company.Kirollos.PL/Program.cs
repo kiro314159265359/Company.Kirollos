@@ -46,8 +46,10 @@ namespace Company.Kirollos.PL
                             .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(config =>
-                config.LoginPath = "/Auth/SignIn"
-                );
+            {
+                config.LoginPath = "/Auth/SignIn";
+                config.AccessDeniedPath = "/Auth/AccessDenied";
+            });
 
             builder.Services.AddAuthentication(options =>
             {

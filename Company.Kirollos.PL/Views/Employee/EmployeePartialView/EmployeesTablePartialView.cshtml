@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Employee>
+
+
+<table class="table table-striped table-bordered table-hover">
+
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Email</th>
+            <th>Adress</th>
+            <th>Phone</th>
+            <th>Salary</th>
+            <th>IsActive</th>
+            <th>IsDeleted</th>
+            <th>HiringDate</th>
+            <th>CreationDate</th>
+            <th>Department</th>
+            <th>Details</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="~/files/images/@item.ImageName" width="100px" height="100px" />
+                </td>
+                <td>@item.Name</td>
+                <td>@item.Age</td>
+                <td>@item.Email</td>
+                <td>@item.Adress</td>
+                <td>@item.Phone</td>
+                <td>@item.Salary</td>
+                <td>@item.IsActive</td>
+                <td>@item.IsDeleted</td>
+                <td>@item.HiringDate</td>
+                <td>@item.CreateAt</td>
+                @if (item.Department is null)
+                {
+                    <td>No Department</td>
+                }
+                else
+                {
+                    <td>@item.Department.Name</td>
+                }
+                <partial name="_ButtonPartialView" model="@item.Id.ToString()" />
+            </tr>
+        }
+    </tbody>
+</table>

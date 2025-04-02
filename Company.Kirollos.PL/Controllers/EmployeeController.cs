@@ -56,7 +56,22 @@ namespace Company.Kirollos.PL.Controllers
             //ViewData["Message"] = "Hello from ViewData";
             //ViewBag.Message = "Hello from ViewBag"; 
             #endregion
-            return View(employees);
+           return View(employees);
+        }
+
+        public async Task<IActionResult> Search(string? SearchInput)
+        {
+            IEnumerable<Employee> employees;
+
+            if (!string.IsNullOrEmpty(SearchInput))
+            {
+                employees = await _unitOfWork.EmployeeRepository.GetByNameAsync(SearchInput)!;
+            }
+            else
+            {
+                employees = await _unitOfWork.EmployeeRepository.GetAllAsync();
+            }
+            return PartialView("EmployeePartialView/EmployeesTablePartialView", employees);
         }
 
         [HttpGet]
