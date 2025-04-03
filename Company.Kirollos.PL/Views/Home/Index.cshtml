@@ -1,8 +1,69 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<link rel="stylesheet" href="~/css/HomeCss.css" />
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">Welcome to My Web Application</h1>
+        <p class="hero-subtitle">Your one-stop solution for web development needs</p>
+        <div class="cta-buttons">
+            <a href="#features" class="btn btn-primary">Explore Features</a>
+            <a href="/Contact" class="btn btn-outline">Contact Us</a>
+        </div>
+    </div>
+</div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="features-section" id="features">
+    <div class="container">
+        <h2 class="section-title">What We Offer</h2>
+
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>Modern Development</h3>
+                <p>Built with ASP.NET Core, providing high performance and cross-platform capabilities.</p>
+                <a href="https://learn.microsoft.com/aspnet/core" class="feature-link">Learn More</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Responsive Design</h3>
+                <p>Fully responsive layout that works beautifully on desktops, tablets, and mobile devices.</p>
+                <a href="#" class="feature-link">View Examples</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>Secure & Reliable</h3>
+                <p>Built with security best practices and reliable architecture for your peace of mind.</p>
+                <a href="#" class="feature-link">Our Security</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="testimonial-section">
+    <div class="container">
+        <h2 class="section-title">What Our Clients Say</h2>
+
+        <div class="testimonial">
+            <p class="testimonial-text">"This platform has transformed how we manage our online presence. The interface is intuitive and the performance is outstanding."</p>
+            <p class="testimonial-author">— Sarah Johnson, Tech Solutions Inc.</p>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section">
+    <div class="container">
+        <h2>Ready to Get Started?</h2>
+        <p>Join thousands of satisfied customers who have transformed their web presence.</p>
+        <a href="/Register" class="btn btn-primary btn-large">Start Your Free Trial</a>
+    </div>
 </div>
