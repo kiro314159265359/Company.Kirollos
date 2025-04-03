@@ -43,6 +43,7 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,HR")]
         public IActionResult Create()
         {
             return View();
@@ -50,7 +51,6 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "HR,Admin")]
         public async Task<IActionResult> Create(CreateDepartmentDto model)
         {
             if (ModelState.IsValid) // Server side validation
@@ -87,6 +87,7 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> Update(int? id)
         {
             if (id is null) return BadRequest("Invalid Id");
@@ -147,6 +148,7 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> Delete(int? id)
         {
             #region Keep Code Clean
@@ -159,7 +161,6 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "HR,Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id, Department model)
         {
             if (ModelState.IsValid)

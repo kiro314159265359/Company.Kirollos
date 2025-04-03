@@ -18,11 +18,13 @@ namespace Company.Kirollos.PL.Controllers
         private readonly UserManager<AppUser> _UserManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IMailService _mailService;
-        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService)
+        private readonly ITwilioService _twilioService;
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService, ITwilioService twilioService)
         {
             _UserManager = userManager;
             _signInManager = signInManager;
             _mailService = mailService;
+            _twilioService = twilioService;
         }
 
         #region SingUp
@@ -320,6 +322,38 @@ namespace Company.Kirollos.PL.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+        #endregion
+
+        #region SendPhoneReset
+
+        public async Task<IActionResult> SendResetUrlPasswordSms(ForgetPasswordDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _UserManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+                    // Generate tokin 
+                    var token = await _UserManager.GeneratePasswordResetTokenAsync(user);
+
+                    // Create URL
+                    var url = Url.Action("ResetPassword", "Auth", new { email = model.Email, token }, Request.Scheme);
+
+                    // Create Sms
+                    var sms = new SMS()
+                    {
+                        To = user.PhoneNumber,
+                        Body = url
+                    };
+                  
+                    _twilioService.SendSms(sms);
+
+                    return RedirectToAction("CheackYourInbox");
+                }
+            }
+            ModelState.AddModelError("", "Invalid Resetting for password");
+            return View("ForgetPassword", model);
         }
         #endregion
     }

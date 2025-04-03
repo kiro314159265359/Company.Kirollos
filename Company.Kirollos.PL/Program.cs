@@ -40,7 +40,10 @@ namespace Company.Kirollos.PL
             builder.Services.AddAutoMapper(typeof(DepartmentProfile));
 
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-            builder.Services.AddScoped<IMailService, MailService>(); 
+            builder.Services.AddScoped<IMailService, MailService>();
+
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection(nameof(TwilioSettings)));
+            builder.Services.AddScoped<ITwilioService, TwilioService>();
 
             #region Life time 
             // 1. builder.Services.AddScoped();    : life time per Request - new object

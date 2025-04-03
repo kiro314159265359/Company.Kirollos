@@ -37,7 +37,6 @@ namespace Company.Kirollos.PL.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
         [HttpGet]
         public async Task<IActionResult> Index(string? SearchInput)
         {
@@ -86,7 +85,6 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "HR,Admin")]
         public async Task<IActionResult> Create(CreateEmployeeDto model)
         {
             if (model is null) return BadRequest();
@@ -140,6 +138,7 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> Update(int? id)
         {
             if (id is null) return BadRequest("Invalid Id");
@@ -173,7 +172,6 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "HR,Admin")]
         public async Task<IActionResult> Update([FromRoute] int id, CreateEmployeeDto model)
         {
             if (ModelState.IsValid)
@@ -202,6 +200,7 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,HR")]
         public async Task<IActionResult> Delete(int? id)
         {
             return await Details(id, "Delete");
@@ -209,7 +208,6 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "HR,Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id, Employee employee)
         {
             if (!ModelState.IsValid) return BadRequest();

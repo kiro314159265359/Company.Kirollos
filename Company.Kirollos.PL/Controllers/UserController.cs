@@ -69,7 +69,8 @@ namespace Company.Kirollos.PL.Controllers
             return View(viewName, dto);
         }
 
-        [HttpGet]  
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(string? id)
         {
             if (string.IsNullOrEmpty(id)) return BadRequest("Invalid Id");
@@ -79,7 +80,6 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromRoute] string id, UserToReturnDto model)
         {
             if (ModelState.IsValid)
@@ -111,6 +111,7 @@ namespace Company.Kirollos.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string? id)
         {
             return await Details(id, "Delete");
@@ -118,7 +119,6 @@ namespace Company.Kirollos.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] string id, UserToReturnDto model)
         {
             if (!ModelState.IsValid) return BadRequest();

@@ -26,16 +26,17 @@
 		</form>
 		@* Sign in with google  *@
 		<br />
-		<a asp-action="GoogleLogin" class="google-btn">
-			<img src="~/images/googlelogo.png" alt="Google Logo" class="google-logo" />
-		</a>
-		<br />
+		<div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 20px 0;">
+			<a asp-action="GoogleLogin" style="display: flex; align-items: center; width: 80%; max-width: 300px; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: 500; transition: all 0.3s ease; background-color: #ffffff; border: 1px solid #dadce0; color: #3c4043;">
+				<img src="~/images/googlelogo.png" style="width: 24px; height: 24px; margin-right: 10px;" alt="Google">
+				Sign in with Google
+			</a>
+			<a asp-action="FacebookLogin" style="display: flex; align-items: center; width: 80%; max-width: 300px; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: 500; transition: all 0.3s ease; background-color: #1877f2; border: 1px solid #1877f2; color: white;">
+				<img src="~/images/facebooklogo.png" style="width: 24px; height: 24px; margin-right: 10px;" alt="Facebook">
+				Sign in with Facebook
+			</a>
+		</div>
 
-		<br />
-		<a asp-action="FacebookLogin"
-		   style="display: block; margin: 0 auto; text-align: center; color: white; background-color: #3b5998; padding: 10px; border-radius: 5px; width: 50%; text-decoration: none;">
-			SignIn with Facebook
-		</a>
 		<br />
 
 		<p>Don't have an account? <a asp-action="SignUp"> Create New Account ?</a></p>
