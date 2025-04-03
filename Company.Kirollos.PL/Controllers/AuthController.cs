@@ -1,6 +1,7 @@
 ﻿using Company.Kirollos.DAL.Models;
 using Company.Kirollos.PL.Dtos;
 using Company.Kirollos.PL.Helpers;
+using Company.Kirollos.PL.Settings.Interface;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -16,10 +17,12 @@ namespace Company.Kirollos.PL.Controllers
     {
         private readonly UserManager<AppUser> _UserManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        private readonly IMailService _mailService;
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService)
         {
             _UserManager = userManager;
             _signInManager = signInManager;
+            _mailService = mailService;
         }
 
         #region SingUp
@@ -144,14 +147,12 @@ namespace Company.Kirollos.PL.Controllers
                         Body = url
                     };
                     // Send Email
-                    var flag = EmailSettings.SendEmail(email);
-                    if (flag)
-                    {
-                        return RedirectToAction("CheackYourInbox");
-                    }
+                    //var flag = EmailSettings.SendEmail(email);
+                    _mailService.SendEmail(email);
+
+                    return RedirectToAction("CheackYourInbox");
                 }
             }
-
             ModelState.AddModelError("", "Invalid Resetting for password");
             return View("ForgetPassword", model);
         }
@@ -186,7 +187,8 @@ namespace Company.Kirollos.PL.Controllers
                 var email = TempData["email"] as string;
                 var token = TempData["token"] as string;
 
-                if (email is null || token is null) { return BadRequest("Error in cradentials"); };
+                if (email is null || token is null) { return BadRequest("Error in cradentials"); }
+                ;
 
                 var user = await _UserManager.FindByEmailAsync(email);
                 if (user is not null)
@@ -212,7 +214,7 @@ namespace Company.Kirollos.PL.Controllers
             {
                 RedirectUri = Url.Action("GoogleResponse")
             };
-            return Challenge(prop , GoogleDefaults.AuthenticationScheme);
+            return Challenge(prop, GoogleDefaults.AuthenticationScheme);
         }
         public async Task<IActionResult> GoogleResponse()
         {

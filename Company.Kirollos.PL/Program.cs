@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Company.Kirollos.PL.Settings;
+using Company.Kirollos.PL.Settings.Interface;
 
 namespace Company.Kirollos.PL
 {
@@ -36,10 +38,15 @@ namespace Company.Kirollos.PL
             builder.Services.AddAutoMapper(typeof(EmployeeProfile));
 
             builder.Services.AddAutoMapper(typeof(DepartmentProfile));
-            // Life time 
+
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+            builder.Services.AddScoped<IMailService, MailService>(); 
+
+            #region Life time 
             // 1. builder.Services.AddScoped();    : life time per Request - new object
             // 2. builder.Services.AddSingleton(); : life time per Operation
-            // 3. builder.Services.AddTransient(); : life time per App
+            // 3. builder.Services.AddTransient(); : life time per App 
+            #endregion
 
             builder.Services.AddIdentity<AppUser, IdentityRole>()
                             .AddEntityFrameworkStores<CompanyDbContext>()
