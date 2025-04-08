@@ -64,11 +64,12 @@ namespace Company.Kirollos.PL.Controllers
                         }
                         foreach (var error in result.Errors)
                         {
-                            ModelState.AddModelError("", error.Description);
+                            ModelState.AddModelError(string.Empty, "Invalid SignUp");
+                           
                         }
                     }
                 }
-                ModelState.AddModelError("", "Invalid SingUp");
+                ModelState.AddModelError(string.Empty, "Invalid SignUp");
             }
             return View(model);
         }

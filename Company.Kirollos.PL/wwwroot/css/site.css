@@ -21,3 +21,20 @@ body {
     margin-bottom: 60px;
 }
 
+.validation-summary-errors {
+    color: #dc3545 !important;
+}
+
+    .validation-summary-errors ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+    }
+
+        .validation-summary-errors ul li {
+            color: #dc3545 !important;
+        }
+
+
+.alert-danger {
+    color: #dc3545 !important;
+}
